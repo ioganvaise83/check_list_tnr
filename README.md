@@ -65,15 +65,10 @@ check_list_tnr/
    cd check_list_tnr
    ```
 
-2. **Настройка переменных окружения:**
-
-   Создайте файл `.env` в корне проекта:
-   ```env
-   PG_DSN=postgres://bpmn_user:bpmn_password@postgres:5432/bpmn_db?sslmode=disable
-   ```
-
-3. **Запуск с помощью Docker Compose:**
+2. **Запуск с помощью Docker Compose:**
    ```bash
+   docker-compose down
+   docker-compose build --no-cache
    docker-compose up -d
    ```
 
@@ -83,40 +78,7 @@ check_list_tnr/
 
    API будет доступен по адресу: `http://localhost/api/checklist`
 
-### Ручная установка (без Docker)
 
-1. **Установка PostgreSQL:**
-   ```bash
-   # Ubuntu/Debian
-   sudo apt-get install postgresql postgresql-contrib
-
-   # Создание базы данных
-   sudo -u postgres createdb bpmn_db
-   sudo -u postgres createuser bpmn_user
-   sudo -u postgres psql -c "ALTER USER bpmn_user PASSWORD 'bpmn_password';"
-   sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE bpmn_db TO bpmn_user;"
-   ```
-
-2. **Установка Go:**
-   ```bash
-   # Скачайте и установите Go с официального сайта
-   # https://golang.org/dl/
-   ```
-
-3. **Установка зависимостей:**
-   ```bash
-   go mod download
-   ```
-
-4. **Запуск сервера:**
-   ```bash
-   export PG_DSN="postgres://bpmn_user:bpmn_password@localhost:5432/bpmn_db?sslmode=disable"
-   go run main.go
-   ```
-
-5. **Настройка веб-сервера:**
-
-   Скопируйте `checklist_tnr_v2.html` в корень веб-сервера и настройте проксирование запросов к API.
 
 ## API документация
 
@@ -190,7 +152,6 @@ CREATE TABLE answers (
 
 2. **Запуск backend для разработки:**
    ```bash
-   export PG_DSN="postgres://bpmn_user:bpmn_password@localhost:5432/bpmn_db?sslmode=disable"
    go run main.go
    ```
 
