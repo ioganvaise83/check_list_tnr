@@ -1,0 +1,45 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    volumes:
+      - ./server/data:/app/data
+    environment:
+      - PORT=8081
+      - PG_DSN=postgres://bpmn_user:bpmn_password@postgres:5432/bpmn_db?sslmode=disable
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: bpmn_db
+      POSTGRES_USER: bpmn_user
+      POSTGRES_PASSWORD: bpmn_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./migration.sql:/docker-entrypoint-initdb.d/migration.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bpmn_user -d bpmn_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./checklist_tnr_v2.html:/usr/share/nginx/html/index.html
+    depends_on:
+      - backend
+
+volumes:
+  data:
+  postgres_data:
